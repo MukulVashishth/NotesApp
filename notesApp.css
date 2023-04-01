@@ -1,0 +1,85 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #292a2d;
+  }
+  
+  li {
+    float: left;
+  }
+  
+  li a {
+    display: block;
+    color: white;
+    text-align: center;
+    margin: 0px 10px;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  li a:hover {
+    background-color: #111;
+  }
+
+.container {
+    min-height: 100vh;
+    width: 100vw;
+    background-color: #292a2d;
+    padding: 25px;
+}
+
+#input-box {
+    border: 1px solid black;
+    padding: 25px;
+}
+
+input,textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    margin-top: 8px;
+    color: white;
+}
+
+button {
+    background: transparent;
+    color: white;
+    padding: 8px 12px;
+    border: 1px solid white;
+}
+
+#notes {
+    padding: 23px;
+    display: flex;
+    flex-wrap: wrap;
+    /* justify-content: space-evenly; */
+}
+
+.note {
+    background-color: transparent;
+    border: 1px solid black;
+    color: #a1a0a0;
+    width: 300px;
+    padding: 15px;
+    margin: 15px;
+}
+
+.deleteNote {
+    float: right;
+    border: none;
+}
+
+.archiveNote {
+    padding-top: 13px;
+    float: right;
+    border: none;
+}
