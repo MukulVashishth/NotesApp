@@ -9,29 +9,32 @@
     <title>My Notes App</title>
 </head>
 <body>
-    <div class="navbar">
-        <ul>
-            <li><a href="notesApp.html">My Notes</a></li>
-            <li><a href="archivedNotes.html">Archived Notes</a></li>
-            <li><a href="deletedNotes.html">Trash</a></li>
-          </ul>
-    </div>
-
     <div class="container">
-        <!-- Input box to add content of notes -->
-        <div id="input-box">
+        <div class="navigation-container">
+            <button class="btn" id="notes-btn">Notes</button>
+            <button class="btn" id="archive-btn">Archive</button>
+            <button class="btn" id="trash-btn">Trash</button>
+        </div>
+
+         <!-- Input box to add content of notes -->
+         <div id="input-box">
             <input type="text" id="addTitle" placeholder="Title">
             <textarea name="" id="addText" cols="30" rows="10" placeholder="Take a note..."></textarea> 
-
             <button id="addNote">Add</button>
         </div>
 
         <!-- Notes block : Here added notes will appear -->
         <div id="notes">
             
+        </div> 
+       <div id="archive">
+            
+        </div>
+        <div id="trashNotes">
+            
         </div>
     </div>
-
+    
     <script src="notesApp.js"></script>
 </body>
 </html>

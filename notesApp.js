@@ -1,99 +1,280 @@
 const addTitle = document.getElementById('addTitle');
 const addText = document.getElementById('addText');
-const addNotesButton = document.getElementById('addNote');
+const addNoteButton = document.getElementById('addNote');
 const notesDiv = document.getElementById('notes');
+const deleteNoteButton = document.getElementById('deleteNote');
+const archiveDiv = document.getElementById('archive');
+const NotesSection = document.querySelector("#notes-btn");
+const archiveSection = document.querySelector("#archive-btn");
+const inputboxDiv = document.querySelector("#input-box");
+const trashNoteSection = document.querySelector("#trash-btn");
+const trashDiv = document.querySelector("#trashNotes");
 
-//Storing the updated notes list in local storage
-var deletedArray = [];
 
-var archivedArray = [];
+//navigation
+window.addEventListener("load", () => {
+    showNotes();
+    notesDiv.style.display = "flex";
+    inputboxDiv.style.display = "block";
+    archiveDiv.style.display = "none";
+    trashDiv.style.display = "none";
+})
+NotesSection.addEventListener("click", () => {
+    showNotes();
+    notesDiv.style.display = "flex";
+    inputboxDiv.style.display = "block";
+    archiveDiv.style.display = "none";
+    trashDiv.style.display = "none";
 
-function addNotes() {
-    //Here we check if any notes are available in local storage
+})
+
+archiveSection.addEventListener("click", () => {
+    showArchiveNotes();
+    notesDiv.style.display = "none";
+    inputboxDiv.style.display = "none";
+    archiveDiv.style.display = "flex";
+    trashDiv.style.display = "none";
+})
+
+trashNoteSection.addEventListener("click", () => {
+    showTrashNotes();
+    notesDiv.style.display = "none";
+    inputboxDiv.style.display = "none";
+    archiveDiv.style.display = "none";
+    trashDiv.style.display = "flex";
+})
+
+addNoteButton.addEventListener('click', addNotes);
+
+function addNotes(){
     let notes = localStorage.getItem('notes');
-
-    //If not available then we create that
-    if(notes === null) {
+    if(notes === null){
         notes = [];
+    }else{
+        notes = JSON.parse(notes);
     }
-
-    else {
-        notes = JSON.parse(notes);      //Value from local storage comes in form of string so we convert that to object using JSON.parse
-    }
-    //This validation is for empty note value
-    if(addText.value == '') {
-        alert('Empty note cannot be added');
-        return;
-    }
-
-    const notesObj = {
+    let myObj = {
         title: addTitle.value,
-        note: addText.value,
+        text: addText.value
     }
+    notes.push(myObj);
+    localStorage.setItem('notes', JSON.stringify(notes));
     addTitle.value = '';
     addText.value = '';
-    notes.push(notesObj);
-    localStorage.setItem('notes', JSON.stringify(notes));   // We can only put values in local storage as string
     showNotes();
 }
 
-function showNotes() {
-    let notesDisp = '';
-    
+
+function showNotes(){
+    let notesHTML = '';
     let notes = localStorage.getItem('notes');
-    if(notes === null) {
-        return ;
-    }
-    else {
+    if(notes === null){
+        return;
+    }else{
         notes = JSON.parse(notes);
     }
-
-    for(let i=0;i<notes.length;i++) {
-        notesDisp += `<div class="note">
-                            <button class="deleteNote" id="${i}" onclick="delNote(${i})"><i class="fa fa-trash-o" style="font-size:24px"></i></button>
-                            <button class="archiveNote" id="${i}" onclick="archNote(${i})"><i class="fa fa-archive fa-lg" aria-hidden="true"></i></button>
-                            <div class="title">${notes[i].title === '' ? 'Note' : notes[i].title}</div>
-                            <div class="text">${notes[i].note}</div>
-                      </div>`
-     }
-     notesDiv.innerHTML = notesDisp;
+    for(let i=0; i<notes.length; i++){
+        notesHTML += `<div class="note">
+                       <span class="title">${notes[i].title === "" ? 'Note' : notes[i].title}<span class="material-symbols-outlined">
+                       </span></button></span>
+                    
+                       <div class="text">${notes[i].text}</div>
+                       <button class="deleteNote" id=${i} onclick="deleteNote(${i})"> <span class="material-symbols-outlined">
+                       Delete
+                     </span></button>
+                       <button class="archiveNote" id=${i} onclick="archiveNote(${i})">Archive</button>
+                </div>`
+    }
+    notesDiv.innerHTML = notesHTML;
 }
 
-
-function delNote(ind) {
+//Deleting Notes
+function deleteNote(ind){
     let notes = localStorage.getItem('notes');
-    if(notes === null) {
-        return ;
-    }
-    else {
+    let trashNotes = localStorage.getItem('trashNotes');
+    if(notes === null){
+        return;
+    }else{
         notes = JSON.parse(notes);
     }
-
-    deletedArray.push(notes[ind]);
-    localStorage.setItem('deletedArray', JSON.stringify(deletedArray));
-
-    notes.splice(ind,1);
-    localStorage.setItem('notes', JSON.stringify(notes));   // We can only put values in local storage as string
-    showNotes();
-}
-
-function archNote(ind) {
-    let notes = localStorage.getItem('notes');
-    if(notes === null) {
-        return ;
+    if(trashNotes === null){
+        trashNotes = [];
+    }else{
+        trashNotes = JSON.parse(trashNotes);
     }
-    else {
-        notes = JSON.parse(notes);
-    }
-
-    archivedArray.push(notes[ind]);
-    localStorage.setItem('archivedArray', JSON.stringify(archivedArray));
-
-    notes.splice(ind,1);
+    trashNotes.push(notes[ind]);
+    localStorage.setItem('trashNotes', JSON.stringify(trashNotes));
+    notes.splice(ind, 1);
     localStorage.setItem('notes', JSON.stringify(notes));
     showNotes();
+
+}
+function showTrashNotes(){
+    let trashNotesHTML = '';
+    let trashNotes = localStorage.getItem('trashNotes');
+    if(trashNotes === null){
+        return;
+    }else{
+        trashNotes = JSON.parse(trashNotes);
+    }
+    for(let i=0; i<trashNotes.length; i++){
+        trashNotesHTML += `<div class="note">
+                        <span class="title">${trashNotes[i].title === "" ? 'Note' : trashNotes[i].title}</span>
+                        <div class="text">${trashNotes[i].text}</div>
+                        <button class="deleteNote" id=${i} onclick="deleteTrashNotes(${i})"> <span class="material-symbols-outlined">
+                        Delete
+                        </span></button>
+                        <button class="archiveNote" id=${i} onclick="archiveTrashNotes(${i})">Archive</button>
+                        <button class="restoreNote" id=${i} onclick="restoreTrashNotes(${i})">Restore</button>
+                </div>`
+    }
+    trashDiv.innerHTML = trashNotesHTML;
 }
 
-addNotesButton.addEventListener('click', addNotes);
+function deleteTrashNotes(ind){
+    let trashNotes = localStorage.getItem('trashNotes');
+    if(trashNotes === null){
+        return;
+    }else{
+        trashNotes = JSON.parse(trashNotes);
+    }
+    trashNotes.splice(ind, 1);
+    localStorage.setItem('trashNotes', JSON.stringify(trashNotes));
+    showTrashNotes();
 
-showNotes();
+}
+
+function archiveTrashNotes(ind){
+    let trashNotes = localStorage.getItem('trashNotes');
+    let Notes = localStorage.getItem('Notes');
+    if(trashNotes === null){
+
+        return;
+    }else{
+
+        trashNotes = JSON.parse(trashNotes);
+    }
+    if(archiveNotes === null){
+        archiveNotes = [];
+    }else{
+        archiveNotes = JSON.parse(archiveNotes);
+    }
+    archiveNotes.push(trashNotes[ind]);
+    localStorage.setItem('archiveNotes', JSON.stringify(archiveNotes));
+    trashNotes.splice(ind, 1);
+    localStorage.setItem('trashNotes', JSON.stringify(trashNotes));
+    showTrashNotes();
+    showArchiveNotes();
+}
+
+function restoreTrashNotes(ind){
+    let trashNotes = localStorage.getItem('trashNotes');
+    let notes = localStorage.getItem('notes');
+    if(trashNotes === null){
+
+        return;
+    }else{
+
+        trashNotes = JSON.parse(trashNotes);
+    }
+    if(notes === null){
+        notes = [];
+    }else{
+
+        notes = JSON.parse(notes);
+    }
+    notes.push(trashNotes[ind]);
+    localStorage.setItem('notes', JSON.stringify(notes));
+    trashNotes.splice(ind, 1);
+    localStorage.setItem('trashNotes', JSON.stringify(trashNotes));
+    showTrashNotes();
+    showNotes();
+}
+
+//Archived Notes
+function archiveNote(ind){
+    let notes = localStorage.getItem('notes');
+    if(notes === null){
+        return;
+    }else{
+        notes = JSON.parse(notes);
+    }
+    let archiveNotes = localStorage.getItem('archiveNotes');
+    if(archiveNotes === null){
+        archiveNotes = [];
+    }else{
+        archiveNotes = JSON.parse(archiveNotes);
+    }
+    archiveNotes.push(notes[ind]);
+    localStorage.setItem('archiveNotes', JSON.stringify(archiveNotes));
+    notes.splice(ind, 1);
+    localStorage.setItem('notes', JSON.stringify(notes));
+    showNotes();
+
+    showArchiveNotes();
+}
+
+
+function showArchiveNotes(){  
+    let archiveNotesHTML = '';
+    let archiveNotes = localStorage.getItem('archiveNotes');
+    if(archiveNotes === null){
+        return;
+    }else{
+        archiveNotes = JSON.parse(archiveNotes);
+    }
+    for(let i=0; i<archiveNotes.length; i++){
+        archiveNotesHTML += `<div class="note">
+                        <span class="title">${archiveNotes[i].title === "" ? 'Note' : archiveNotes[i].title}</span>
+                        <div class="text">${archiveNotes[i].text}</div>
+                        <button class="deleteNote" id=${i} onclick="deleteArchiveNotes(${i})"> <span class="material-symbols-outlined">
+                        Delete
+                      </span></button>
+                        <button class="undoNote" id=${i} onclick="undoArchiveNotes(${i})">Undo</button>
+                    </div>`
+    }
+    archiveDiv.innerHTML = archiveNotesHTML;
+}
+
+
+
+function deleteArchiveNotes(ind){
+    let archiveNotes = localStorage.getItem('archiveNotes');
+    let trashNotes = localStorage.getItem('trashNotes');
+    if(archiveNotes === null){
+        return;
+    }else{
+        archiveNotes = JSON.parse(archiveNotes);
+    }
+    if(trashNotes === null){
+        trashNotes = [];
+    }else{
+        trashNotes = JSON.parse(trashNotes);
+    }
+    trashNotes.push(archiveNotes[ind]);
+    localStorage.setItem('trashNotes', JSON.stringify(trashNotes));
+     
+    archiveNotes.splice(ind, 1);
+    localStorage.setItem('archiveNotes', JSON.stringify(archiveNotes));
+    showArchiveNotes();
+}
+
+function undoArchiveNotes(ind){
+    let notes = localStorage.getItem('notes');
+    if(notes === null){
+        notes = [];
+    }else{
+        notes = JSON.parse(notes);
+    }
+    let archiveNotes = localStorage.getItem('archiveNotes');
+    if(archiveNotes === null){
+        return;
+    }else{
+        archiveNotes = JSON.parse(archiveNotes);
+    }
+    notes.push(archiveNotes[ind]);
+    localStorage.setItem('notes', JSON.stringify(notes));
+    archiveNotes.splice(ind, 1);
+    localStorage.setItem('archiveNotes', JSON.stringify(archiveNotes));
+    showArchiveNotes();
+}
